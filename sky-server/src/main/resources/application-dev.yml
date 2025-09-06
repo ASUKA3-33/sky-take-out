@@ -8,7 +8,7 @@ sky:
     password: 1234
   alioss:
       endpoint: oss-cn-guangzhou.aliyuncs.com
-      access-key-id: LTAI5tFUR1Ti4enfyN7CDgZR
-      access-key-secret: rjhycZ9rmhzqKpJXemM8v8VNNXoHYP
+      access-key-id: 2222
+      access-key-secret: 1111
       bucket-name: asuka01
 

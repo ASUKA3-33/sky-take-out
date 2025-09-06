@@ -46,7 +46,7 @@ public class CommonController {
             String filePath = aliOssUtil.upload(file.getBytes(), objectName);
 
             //文件上传
-            aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
+            //aliOssUtil.upload(file.getBytes(), file.getOriginalFilename());
 
             return Result.success(filePath);
         } catch (IOException e) {

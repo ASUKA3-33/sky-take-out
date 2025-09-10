@@ -87,6 +87,11 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 分页查询员工
+     * @param employeePageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     @ApiOperation(value = "分页查询员工")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
@@ -95,6 +100,12 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
+    /**
+     * 启用禁用员工功能
+     * @param status
+     * @param id
+     * @return
+     */
     @ApiOperation("启用禁用员工功能")
     @PostMapping("/status/{status}")
     public Result startOrStop(@PathVariable Integer status, Long id){

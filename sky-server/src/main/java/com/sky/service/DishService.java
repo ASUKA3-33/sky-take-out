@@ -5,6 +5,7 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.DishVO;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public interface DishService {
     /**
      * 根据ID查询菜品
-     * @param id
+     * @param dishDTO
      * @return
      */
     public void saveWithFlavors(DishDTO dishDTO);
@@ -52,4 +53,14 @@ public interface DishService {
      * @return
      */
     List<Dish> list(Long categoryId);
+
+
+    /**
+     * 条件查询菜品和口味
+     * @param dish
+     * @return
+     */
+    List<DishVO> listWithFlavor(Dish dish);
+
+
 }

@@ -8,6 +8,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+
+
 @Configuration
 @Slf4j
 public class RedisConfiguration {
@@ -20,7 +22,7 @@ public class RedisConfiguration {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         //设置redis key的序列化方式
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        //设置redis value的序列化方式
+        //设置redis value的序列化方式rrr
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         return redisTemplate;
     }

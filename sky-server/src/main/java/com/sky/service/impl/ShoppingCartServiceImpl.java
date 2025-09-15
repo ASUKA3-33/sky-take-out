@@ -131,7 +131,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 shoppingCartMapper.updateNumberById(shoppingCart);
             }
         }
-
-
     }
+
+
 }

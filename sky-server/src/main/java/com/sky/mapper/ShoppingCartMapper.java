@@ -14,6 +14,13 @@ public interface ShoppingCartMapper {
 
 
     /**
+     * 批量插入购物车数据
+     * @param shoppingCartList
+     */
+    static void insertBatch(List<ShoppingCart> shoppingCartList) {
+    }
+
+    /**
      *  根据购物车查询商品列表
      * @param shoppingCart
      * @return
@@ -47,5 +54,6 @@ public interface ShoppingCartMapper {
      */
     @Delete("delete from shopping_cart where id = #{id}")
     void deleteById(Long id);
+
 
 }

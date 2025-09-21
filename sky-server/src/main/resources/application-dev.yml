@@ -23,8 +23,8 @@ sky:
      privateKeyPath: D://pay/apiclient_key.pem
      piV3Key: dadasd
      weChatPayCertFilePath: D://pay/wechatpay.pem
-     notifyUrl: https://5f17a748.r16.cpolar.top/notify/paySuccess
-     refundNotifyUrl: https://5f17a748.r16.cpolar.top/notify/refundSuccess
+     notifyUrl:  https://29e25275.r8.cpolar.cn/notify/paySuccess
+     refundNotifyUrl:  https://29e25275.r8.cpolar.cn/notify/refundSuccess
 
 
 

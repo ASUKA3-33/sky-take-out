@@ -72,36 +72,4 @@ public class UserController {
     }
 
 
-    /**
-     * 订单支付
-     *
-     * @param ordersPaymentDTO
-     * @return
-     */
-    @PutMapping("/order/payment")
-    @ApiOperation("订单支付")
-    public Result<OrderPaymentVO> payment(@RequestBody OrdersPaymentDTO ordersPaymentDTO) throws Exception {
-        log.info("订单支付：{}", ordersPaymentDTO);
-        OrderPaymentVO orderPaymentVO = orderService.payment(ordersPaymentDTO);
-        log.info("生成预支付交易单：{}", orderPaymentVO);
-        return Result.success(orderPaymentVO);
-    }
-
-    /**
-     * 历史订单查询
-     * @return
-     * @Param
-     */
-    @GetMapping("order/historyOrders")
-    @ApiOperation("历史订单查询")
-    public Result<PageResult> page(int page, int pageSize, Integer statues) {
-
-        log.info("历史订单查询，参数：page={},pageSize={},statues={}",page,pageSize,statues);
-       PageResult pageResult= orderService.pageQuery4User(page, pageSize, statues);
-
-       return Result.success(pageResult);
-
-
-    }
-
 }

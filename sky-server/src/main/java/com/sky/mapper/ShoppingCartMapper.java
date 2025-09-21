@@ -17,8 +17,8 @@ public interface ShoppingCartMapper {
      * 批量插入购物车数据
      * @param shoppingCartList
      */
-    static void insertBatch(List<ShoppingCart> shoppingCartList) {
-    }
+    void insertBatch(List<ShoppingCart> shoppingCartList) ;
+
 
     /**
      *  根据购物车查询商品列表

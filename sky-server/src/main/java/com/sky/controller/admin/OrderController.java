@@ -37,7 +37,7 @@ public class OrderController {
 
         PageResult pageResult = orderService.condictionSearch(ordersPageQueryDTO);
 
-        return Result.success();
+        return Result.success(pageResult);
     }
 
     /**
@@ -118,9 +118,9 @@ public class OrderController {
     /**
      * 完成订单
      */
-    @PutMapping("/compelete/{id}")
+    @PutMapping("/complete/{id}")
     @ApiOperation(value = "完成订单")
-    public Result compelete(@PathVariable Long id) throws Exception {
+    public Result complete(@PathVariable Long id) throws Exception {
         log.info("完成订单,{}", id);
         orderService.complete(id);
         return Result.success();

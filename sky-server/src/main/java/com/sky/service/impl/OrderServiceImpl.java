@@ -2,6 +2,7 @@ package com.sky.service.impl;
 
 import ch.qos.logback.core.BasicStatusManager;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -141,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
         // 当前登录用户id
         Long userId = BaseContext.getCurrentId();
         User user = userMapper.getById(userId);
-
+/*
         //调用微信支付接口，生成预支付交易单
         JSONObject jsonObject = weChatPayUtil.pay(
                 ordersPaymentDTO.getOrderNumber(), //商户订单号
@@ -149,6 +150,10 @@ public class OrderServiceImpl implements OrderService {
                 "苍穹外卖订单", //商品描述
                 user.getOpenid() //微信用户的openid
         );
+        */
+
+
+        JSONObject jsonObject=new JSONObject();
 
         if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
             throw new OrderBusinessException("该订单已支付");
@@ -157,6 +162,7 @@ public class OrderServiceImpl implements OrderService {
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
 
+        paySuccess(ordersPaymentDTO.getOrderNumber());
         return vo;
     }
 
@@ -297,26 +303,26 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public void repetition(Long id) {
+        // 获取用户id
+        Long userId = BaseContext.getCurrentId();
 
-        //获取用户id
-        Long userId=BaseContext.getCurrentId();
+        // 根据订单id查询订单详情
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
 
-        //根据订单id查询订单
-        Orders orders=orderMapper.getById(id);
-        //获取订单详情
-       List<OrderDetail>orderDetailList=orderDetailMapper.getByOrderId(id);
+        // 将订单详情对象转换为购物车对象
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(orderDetail -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
 
-       List<ShoppingCart> shoppingCartList=new ArrayList<>();
-       for(OrderDetail orderDetail:orderDetailList){
-           ShoppingCart shoppingCart=new ShoppingCart();
-           BeanUtils.copyProperties(orderDetail,shoppingCart);
-           shoppingCart.setUserId(userId);
-           shoppingCart.setCreateTime(LocalDateTime.now());
-           shoppingCartList.add(shoppingCart);
-       }
+            // 将原订单详情里面的菜品信息重新复制到购物车对象中（排除id字段）
+            BeanUtils.copyProperties(orderDetail, shoppingCart, "id");
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
 
-       ShoppingCartMapper.insertBatch(shoppingCartList);
+            return shoppingCart;
+        }).collect(Collectors.toList());
 
+        // 将购物车对象批量添加到数据库
+        shoppingCartMapper.insertBatch(shoppingCartList);
     }
 
     /**
@@ -388,7 +394,7 @@ public class OrderServiceImpl implements OrderService {
     public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
         Orders orders=Orders.builder()
                 .id(ordersConfirmDTO.getId())
-                .status(ordersConfirmDTO.getStatus())
+                .status(Orders.CONFIRMED)
                 .build();
         orderMapper.update(orders);
     }
@@ -466,7 +472,7 @@ public class OrderServiceImpl implements OrderService {
 
         Orders ordersDB=orderMapper.getById(id);
 
-        if(ordersDB==null||!ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+        if(ordersDB==null||!ordersDB.getStatus().equals(Orders.CONFIRMED)){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
@@ -484,7 +490,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void complete(Long id) {
         Orders ordersDB=orderMapper.getById(id);
-        if(ordersDB==null||!ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+        if(ordersDB==null||!ordersDB.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)){
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
         Orders orders=new Orders();
@@ -493,6 +499,22 @@ public class OrderServiceImpl implements OrderService {
         orders.setDeliveryTime(LocalDateTime.now());
         orderMapper.update(orders);
 
+    }
+
+    @Override
+    public void reminder(Long id) {
+        Orders ordersDB=orderMapper.getById(id);
+        if(ordersDB==null||!ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Map map=new HashMap();
+
+        map.put("type",2);
+        map.put("orderId",id);
+        map.put("content","订单号"+ordersDB.getNumber());
+        //发送websocket消息
+        webSocketServer.sendToAllClient(JSON.toJSONString(id));
     }
 
 }
